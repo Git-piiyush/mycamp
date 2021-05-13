@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const cities = require('./cities');
-const { descriptors , places  } = require('./seedHelpers');
+const { descriptors, places } = require('./seedHelpers');
 const Campground = require('../models/campground');
 
 mongoose.connect('mongodb://localhost:27017/mycamp', {
@@ -25,7 +25,10 @@ const seedDB = async () => {
         const random1000 = Math.floor(Math.random() * 1000);
         const camp = new Campground({
             title: `${sample(descriptors)} ${sample(places)}`,
-            location: `${cities[random1000].city}, ${cities[random1000].state}  `
+            location: `${cities[random1000].city}, ${cities[random1000].state}  `,
+            description: "Hey there I am the description of the image ",
+            image: 'https://source.unsplash.com/collection/483251',
+            price: Math.floor(Math.random() * 50)
         })
         await camp.save();
     }
