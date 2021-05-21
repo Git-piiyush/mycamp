@@ -3,11 +3,20 @@ const app = express()
 const path = require('path')
 const ejsMate = require('ejs-mate')
 const ExpressError = require('./utils/ExpressError');
+
+//session and flash
 const session = require('express-session')
 const flash = require('connect-flash')
-//Routes require
-const campgrounds = require('./routes/campgrounds')
-const reviews = require('./routes/reviews')
+
+//Routes 
+const campgroundRoutes = require('./routes/campgrounds')
+const reviewRoutes = require('./routes/reviews')
+const userRoutes = require('./routes/users')
+
+//Passport
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const User = require('./models/user');
 
 // Mongodb connection
 const mongoose = require('mongoose');
@@ -17,6 +26,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, "Connection Error"));
 db.once('open', () => console.log("Mongoose connected !!"));
 
+// app configurations
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
@@ -42,16 +52,28 @@ const sessionConfig = {
 app.use(session(sessionConfig))
 app.use(flash())
 
+
+
+//must be used after session()
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser()) //Store in the session
+passport.deserializeUser(User.deserializeUser())
+
+//placed just before passport middleware in order to hide logout link
 app.use((req, res, next) => {
-    res.locals.success = req.flash('success'); //make success variable available to our all local files.
+    res.locals.currentUser = req.user; // Can access user information through passwort in every template
+    res.locals.success = req.flash('success'); //res.locals make success variable available to our all local files.
     res.locals.error = req.flash('error');
     next();
 })
 
-
 //Passing our defined routes
-app.use('/campgrounds', campgrounds)
-app.use('/campgrounds/:id/reviews', reviews)
+app.use('/campgrounds', campgroundRoutes)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
+app.use('/', userRoutes)
 
 
 app.get('/', (req, res) => {
@@ -60,7 +82,6 @@ app.get('/', (req, res) => {
 
 
 // middleware for error handling
-
 app.all('*', (req, res, next) => {
     next(new ExpressError("Page not found", 404));
 })
