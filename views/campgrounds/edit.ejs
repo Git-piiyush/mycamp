@@ -30,6 +30,13 @@
                         required><%=campground.description%></textarea>
                 </div>
 
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Browse files</label>
+                    <input class="form-control" type="file" id="image" name="image" multiple>
+                </div>
+
+
                 <div class="mb-3">
                     <% campground.images.forEach(function(img, i) { %>
                         <img src="<%=img.thumbnail %>" class="img-thumbnail" alt="">
