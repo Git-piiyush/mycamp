@@ -32,6 +32,7 @@ module.exports.login = (req, res) => {
 
     req.flash('success', 'Welcome back!!')
     const redirectUrl = req.session.returnTo || '/campgrounds'; //after log-in user return the url which he in on before login
+    delete req.session.returnTo
     res.redirect(redirectUrl)
 
 }

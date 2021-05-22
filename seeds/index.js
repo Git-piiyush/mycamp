@@ -10,7 +10,6 @@ mongoose.connect('mongodb://localhost:27017/mycamp', {
 });
 
 const db = mongoose.connection;
-
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
@@ -28,8 +27,18 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`,
             location: `${cities[random1000].city}, ${cities[random1000].state}  `,
             description: "Hey there I am the description of the image ",
-            image: 'https://source.unsplash.com/collection/483251',
-            price: Math.floor(Math.random() * 50)
+            price: Math.floor(Math.random() * 50),
+            images: [
+                {
+                    url: 'https://res.cloudinary.com/dcalmcalm/image/upload/v1621683206/myCamp/brulxa0wee3jemzjfozz.jpg',
+                    filename: 'myCamp/brulxa0wee3jemzjfozz'
+                },
+                {
+                    url: 'https://res.cloudinary.com/dcalmcalm/image/upload/v1621683207/myCamp/cjika1zkpjypqiipxo6o.jpg',
+                    filename: 'myCamp/cjika1zkpjypqiipxo6o'
+
+                }
+            ]
         })
         await camp.save();
     }

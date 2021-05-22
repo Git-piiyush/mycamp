@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config()
+}
+
+
+
 const express = require('express')
 const app = express()
 const path = require('path')
@@ -20,7 +26,7 @@ const User = require('./models/user');
 
 // Mongodb connection
 const mongoose = require('mongoose');
-const { findById } = require('./models/campground');
+// const { findById } = require('./models/campground');
 mongoose.connect('mongodb://localhost:27017/mycamp', { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, "Connection Error"));
@@ -34,7 +40,6 @@ app.use(express.urlencoded({ extended: true }))  // to parse the req.body
 
 const methodOverride = require('method-override');  //to delete and update
 app.use(methodOverride('_method'));
-
 app.use(express.static(path.join(__dirname, 'public')))
 
 
